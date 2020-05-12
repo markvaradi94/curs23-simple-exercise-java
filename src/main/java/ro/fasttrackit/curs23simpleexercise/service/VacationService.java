@@ -43,10 +43,8 @@ public class VacationService {
 
     public Vacation replaceVacation(Integer id, Vacation vacation) {
         Vacation vacationToReplace = getOrThrow(id);
-        vacationToReplace.setLocation(vacation.getLocation());
-        vacationToReplace.setDuration(vacation.getDuration());
-        vacationToReplace.setPrice(vacation.getPrice());
-        return vacationRepository.save(vacationToReplace);
+        vacationRepository.delete(vacationToReplace);
+        return vacationRepository.save(vacation);
     }
 
     private Vacation getOrThrow(Integer id) {
