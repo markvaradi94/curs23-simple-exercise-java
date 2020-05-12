@@ -1,15 +1,12 @@
 package ro.fasttrackit.curs23simpleexercise.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ro.fasttrackit.curs23simpleexercise.domain.Vacation;
 import ro.fasttrackit.curs23simpleexercise.exceptions.ResourceNotFoundException;
 import ro.fasttrackit.curs23simpleexercise.repository.VacationRepository;
 
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.stream.Collectors.*;
 
 @Service
 public class VacationService {
@@ -24,7 +21,7 @@ public class VacationService {
         if (location != null && maxPrice == null) {
             return Collections.unmodifiableList(vacationRepository.findVacationsByLocationIgnoreCase(location));
         } else if (location == null && maxPrice != null) {
-            return Collections.unmodifiableList(vacationRepository.findVacationsByPrice(maxPrice));
+            return Collections.unmodifiableList(vacationRepository.findVacationsByPriceLessThanEqual(maxPrice));
         } else {
             return Collections.unmodifiableList(vacationRepository.findAll());
         }

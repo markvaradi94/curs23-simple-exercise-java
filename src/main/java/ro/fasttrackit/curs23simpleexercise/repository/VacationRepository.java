@@ -9,5 +9,5 @@ public interface VacationRepository extends JpaRepository<Vacation, Integer> {
 
     List<Vacation> findVacationsByLocationIgnoreCase(String location);
 
-    List<Vacation> findVacationsByPrice(Integer maxPrice);
+    List<Vacation> findVacationsByPriceLessThanEqual(Integer maxPrice);
 }
