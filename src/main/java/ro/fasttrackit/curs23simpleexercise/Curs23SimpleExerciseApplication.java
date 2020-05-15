@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import ro.fasttrackit.curs23simpleexercise.domain.MainMenu;
+import ro.fasttrackit.curs23simpleexercise.menu.MainMenu;
 import ro.fasttrackit.curs23simpleexercise.domain.Vacation;
 import ro.fasttrackit.curs23simpleexercise.repository.VacationRepository;
 import ro.fasttrackit.curs23simpleexercise.service.VacationService;

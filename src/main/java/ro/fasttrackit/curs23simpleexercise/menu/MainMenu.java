@@ -1,15 +1,20 @@
-package ro.fasttrackit.curs23simpleexercise.domain;
+package ro.fasttrackit.curs23simpleexercise.menu;
 
 import de.vandermeer.asciitable.AsciiTable;
+import de.vandermeer.skb.interfaces.transformers.textformat.TextAlignment;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import ro.fasttrackit.curs23simpleexercise.domain.Vacation;
 import ro.fasttrackit.curs23simpleexercise.exceptions.ResourceNotFoundException;
 import ro.fasttrackit.curs23simpleexercise.service.VacationService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Scanner;
 
@@ -49,7 +54,7 @@ public class MainMenu {
 
     private int getInput() {
         System.out.print("Select your option: ");
-        return scanner.nextInt();
+        return numeric(scanner.next());
     }
 
     private void executeInput(int input) {
@@ -97,7 +102,7 @@ public class MainMenu {
 
     private void handleVacationsUnderAmount() {
         System.out.print("Enter maximum price: ");
-        Integer maxPrice = scanner.nextInt();
+        Integer maxPrice = numeric(scanner.next());
 
         UriComponentsBuilder requestBuilder = UriComponentsBuilder.fromHttpUrl("http://localhost:8080/vacations")
                 .queryParam("maxPrice", maxPrice)
@@ -114,7 +119,7 @@ public class MainMenu {
 
     private void handleDeleteVacation() {
         System.out.print("Enter ID of vacation to be deleted: ");
-        Integer id = scanner.nextInt();
+        Integer id = numeric(scanner.next());
         try {
             Vacation vacationToDelete = vacationService.findById(id);
             rest.delete(builder.toUriString() + vacationToDelete.getId());
@@ -125,7 +130,7 @@ public class MainMenu {
 
     private void handleUpdateVacation() {
         System.out.print("Enter ID of vacation to be updated: ");
-        Integer id = scanner.nextInt();
+        Integer id = numeric(scanner.next());
         scanner.nextLine();
         try {
             Vacation vacationToUpdate = vacationService.findById(id);
@@ -154,10 +159,22 @@ public class MainMenu {
         System.out.print("Enter location: ");
         String location = scanner.next();
         System.out.print("Enter price: ");
-        Integer price = scanner.nextInt();
+        Integer price = numeric(scanner.next());
         System.out.print("Enter duration: ");
-        Integer duration = scanner.nextInt();
+        Integer duration = numeric(scanner.next());
         return new Vacation(location, price, duration);
+    }
+
+    private Integer numeric(String input) {
+        if (StringUtils.isNumeric(input)) {
+            return Integer.parseInt(input);
+        } else {
+            while (!StringUtils.isNumeric(input)) {
+                System.out.print("Incorrect input. Please enter correct value: ");
+                input = scanner.next();
+            }
+        }
+        return Integer.parseInt(input);
     }
 
     private void renderAsciiTable(List<Vacation> vacations) {
@@ -171,9 +188,23 @@ public class MainMenu {
         System.out.println(asciiTable.render());
     }
 
+    private void renderEmptyAsciiTable() {
+        AsciiTable asciiTable = new AsciiTable();
+        asciiTable.addRule();
+        asciiTable.addRow(" NO ELEMENTS FOUND FOR YOUR SEARCH")
+                .setTextAlignment(TextAlignment.CENTER);
+        asciiTable.addRule();
+        System.out.println(asciiTable.render());
+    }
+
     private void printOptionResult(UriComponentsBuilder requestBuilder) {
         List<Vacation> vacations = getListOfVacations(requestBuilder);
-        renderAsciiTable(vacations);
+        if (!vacations.isEmpty()) {
+            renderAsciiTable(vacations);
+        } else {
+            renderEmptyAsciiTable();
+        }
+
     }
 
 }
